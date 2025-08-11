@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
+const { type } = require('os');
 
 const UserSchema = new mongoose.Schema({
     
@@ -59,7 +60,15 @@ const UserSchema = new mongoose.Schema({
     phoneNumber : {
         type : String,
         trim : true,
-    }
+    },
+
+    resetToken : {
+        type : String,
+    },
+
+    resetTokenExpires : {
+        type : Date,
+    },
 });
 
 
