@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.models');
 const auth = require('../middlewares/auth.middleware');
+const sendSMTPEmail = require('../config/emailSend');
 
 const router = express.Router();
 
@@ -96,10 +97,27 @@ router.post("/request-password-reset", async (req, res) => {
     await user.save();
     
     // Send Email with Reset Token .
+        // For Sending Email .
+        // const subject = "Reset Password";
+        // const text = `Click on the below link to reset your password : http://localhost:3000/reset-password?token=${resetToken}`;
+        // sendSMTPEmail(user.email, subject, text);
     
-    res.json({ message : "Password reset token sent to your email.", resetToken : resetToken });
+        // res.json({ message : "Password reset token sent to your email.", resetToken : resetToken });
+
+        // For Sending Email .
+
+        const subject = "Reset Password";
+        const text = `Click on the below link to reset your password : http://localhost:3000/reset-password?token=${resetToken}`;
+        sendSMTPEmail(user.email, subject, text);
+
+
+        res.json({
+            message : "Password reset token sent to your email.",
+            resetToken : resetToken
+        });
 
 });
+
 
 // This API For Resetting Password And Save New Password.
 router.post("/reset-password", async (req, res) => {
