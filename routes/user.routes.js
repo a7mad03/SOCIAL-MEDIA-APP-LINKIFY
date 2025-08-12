@@ -237,6 +237,42 @@ router.post("accept-request/:requesterId", auth, async (req, res) => {
     res.json({ message : "Follow Request Accepted successfully." });
 });
 
+// API For Getting The List Of Followers And Following.
+router.get("/:userId/followers", auth, async (req, res) => {
+    const userId = req.params.userId;
+    const currentUserId = req.params._id;
+
+    const user = await User.findById(userId).populate("Followers", "_id username");
+    if(!user) return res.status(404).json({ message: "User not found." });
+
+    const currentUser = await User.findById(currentUserId);
+    if(!currentUser) return res.status(404).json({ message: "User not found." });
+
+    if(user.followers.includes(userId) || !user.isPrivate){
+        return res.json(user.followers);
+    }else{
+        return res.status(403).json({ message: "Access denied. You are not allowed to see followers." });
+    }
+});
+
+
+router.get("/:userId/following", auth, async (req, res) => {
+    const userId = req.params.userId;
+    const currentUserId = req.params._id;
+
+    const user = await User.findById(userId).populate("following", "_id username");
+    if(!user) return res.status(404).json({ message: "User not found." });
+
+    const currentUser = await User.findById(currentUserId);
+    if(!currentUser) return res.status(404).json({ message: "User not found." });
+
+    if(user.followers.includes(userId) || !user.isPrivate){
+        return res.json(user.followers);
+    }else{
+        return res.status(403).json({ message: "Access denied. You are not allowed to see following List." });
+    }
+});
+
 
 const generateToken = (data) => {
     return jwt.sign(data, process.env.JWT_SECRET);
