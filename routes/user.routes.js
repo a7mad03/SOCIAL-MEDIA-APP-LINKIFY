@@ -91,8 +91,8 @@ router.post("/request-password-reset", async (req, res) => {
 
     const resetToken = jwt.sign({ _id : user._id }, process.env.JWT_KEY, { expiresIn : "1h" });
 
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordTokenExpires = Date.now() + 3600000;
+    user.resetToken = resetToken;
+    user.resetTokenExpires = Date.now() + 3600000;
     await user.save();
     
     // Send Email with Reset Token .
@@ -109,7 +109,7 @@ router.post("/reset-password", async (req, res) => {
     // Step-1 : Verify the token.
 
     const decodedUser = jwt.verify(resetToken, process.env.JWT_KEY);
-    let user = await User.findByIdAndUpdate(decodedUser._id);
+    let user = await User.findById(decodedUser._id);
     
     if(!user || user.resetToken !== resetToken || user.resetTokenExpires <= Date.now()) return res.status(404).json({ message: "Invalid Or Expired Token !!!!" });
 

@@ -69,6 +69,7 @@ const UserSchema = new mongoose.Schema({
     resetTokenExpires : {
         type : Date,
     },
+
 });
 
 
