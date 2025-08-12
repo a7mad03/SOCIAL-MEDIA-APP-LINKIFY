@@ -70,6 +70,21 @@ const UserSchema = new mongoose.Schema({
         type : Date,
     },
 
+    followers : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'User',
+    }],
+
+    following : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'User',
+    }],
+
+    followRequests : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'User',
+    }],
+
 });
 
 

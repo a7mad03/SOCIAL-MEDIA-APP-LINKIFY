@@ -142,6 +142,49 @@ router.post("/reset-password", async (req, res) => {
 
 });
 
+
+// Follow The User .
+router.post("/:userId/follow", auth, async (req, res) => {
+    
+    const userId = req.params.userId;
+    const currentUserId = req.params._id;
+
+    if(userId === currentUserId) return res.status(400).json({ message: "You cannot follow yourself." }); 
+
+    const userToFollow = await User.findById(userId);
+    if(!userToFollow) return res.status(404).json({ message: "User not found." });
+
+    const currentUser = await User.findById(currentUserId);
+    if(!currentUser) return res.status(404).json({ message: "User not found." });
+
+    if(userToFollow.isPrivate){
+        // Logic for private user follow.
+
+        if(userToFollow.followers.includes(currentUserId)){
+            return res.status(400).json({ message: "You are already following this user." });
+        }
+        else{
+            userToFollow.followRequests.push(currentUserId);
+            await userToFollow.save();
+            return res.json({ message : "Follow Request sent to User." });
+        }
+    }else{
+
+        if(userToFollow.followers.includes(currentUserId)){
+            return res.status(400).json({ message: "You are already following this user." });
+        }
+        else{
+            userToFollow.followers.push(currentUserId);
+            currentUser.following.push(userId);
+            await userToFollow.save();
+            await currentUser.save();
+            return res.json({ message : "User followed successfully." });
+        }
+    }
+
+
+});
+
 const generateToken = (data) => {
     return jwt.sign(data, process.env.JWT_SECRET);
 }
