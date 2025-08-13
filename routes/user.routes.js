@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.models');
 const auth = require('../middlewares/auth.middleware');
-const sendSMTPEmail = require('../config/emailSend');
+const sendSMTPEmail = require('../config/email.send');
 
 const router = express.Router();
 

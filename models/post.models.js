@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { type } = require('os');
 
 const postSchema = new mongoose.Schema({
-    
+
     user : {
         type : mongoose.Schema.Types.ObjectId, 
         ref : 'User',
@@ -43,5 +43,5 @@ const postSchema = new mongoose.Schema({
 }, {timestamps : true});
 
 
-const Post = mongoose.model('Post', UserSchema);
+const Post = mongoose.model('Post', postSchema);
 module.exports = Post;

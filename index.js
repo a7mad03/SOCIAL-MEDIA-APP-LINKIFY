@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 // Imports routes :
 const userRoutes = require("./routes/user.routes");
+const postRoutes = require("./routes/post.routes");
 
 const app = express();
 
@@ -21,7 +22,11 @@ app.get("/", (req, res) => {
 
 // Routes-Middleware - API Endpoints.
 
+// Users related routes.
 app.use("/api/users", userRoutes); 
+
+// Posts related routes.
+app.use("/api/posts", postRoutes);  
 
 
 app.listen(3000, () => {
