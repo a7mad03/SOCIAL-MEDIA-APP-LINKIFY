@@ -156,4 +156,27 @@ router.post("/:postId/comment", auth, async (req, res) => {
 
 });
 
+// API For Adding A Reply To A Comment.
+
+router.post("/:postId/comment/:commentId/reply", auth, async (req, res) => {
+    const {postId, commentId} = req.params;
+    const userId = req.user._id;
+    const text = req.body.text;
+
+    if(!text) return res.status(400).json({ message: "Comment text is required." });
+
+    const newReply = {
+        user: userId,
+        text: text
+    };
+
+    const post = await Post.findOneAndUpdate({_id : postId, "comments._id" : commentId}, { $push: { "comments.$.replies": newReply } }, { new: true });
+
+    const comment = post.comments.id(commentId);
+
+    res.json({ message: "Reply added successfully", reply : comment.replies[comment.replies.length - 1]});
+
+
+});
+
 module.exports = router;
