@@ -179,4 +179,25 @@ router.post("/:postId/comment/:commentId/reply", auth, async (req, res) => {
 
 });
 
+// API For Deleting Speacific Comment From The Post.
+
+router.delete("/:postId/comment/:commentId", auth, async (req, res) => {
+    const {postId, commentId} = req.params;
+    const userId = req.user._id;
+    
+
+    const post = await Post.findOneAndUpdate(
+        {_id : postId, $or : [
+            {user : userId}, {"comments._id": commentIdId, "comments.user": userId}
+        ]}, 
+        { $pull: { comments: {_id : commentId} } }, 
+        { new: true }
+    );
+
+    if(!post) return res.status(404).json({ message: "Post or Comment not found." });
+
+    res.status(200).json({ message: "Comment deleted successfully.", comments : post.comments });
+
+});
+
 module.exports = router;
