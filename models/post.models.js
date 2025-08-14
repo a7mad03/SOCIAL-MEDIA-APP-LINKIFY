@@ -2,6 +2,47 @@ const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { type } = require('os');
+const { createDeflate } = require('zlib');
+
+// Comment Schema for Post.
+
+const commentSchema = new mongoose.Schema({
+    user : {
+        type : mongoose.Schema.Types.ObjectId, 
+        ref : "User", 
+        required : true
+    },
+
+    text : {
+        type : String,
+        required : true,
+    },
+
+    createdAt : {
+        type : Date,
+        default : Date.now()
+    },
+
+    replies : [{
+            user : {
+            type : mongoose.Schema.Types.ObjectId, 
+            ref : "User", 
+            required : true
+        },
+
+        text : {
+            type : String,
+            required : true,
+        },
+
+        createdAt : {
+            type : Date,
+            default : Date.now()
+        }
+    }]
+});
+
+
 
 const postSchema = new mongoose.Schema({
 
@@ -38,7 +79,9 @@ const postSchema = new mongoose.Schema({
 
     location : {
         type : String
-    }
+    },
+
+    comments : [commentSchema],
 
 }, {timestamps : true});
 
