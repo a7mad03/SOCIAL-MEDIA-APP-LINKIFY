@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs/promises');
 const auth = require('../middlewares/auth.middleware');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
@@ -81,7 +82,7 @@ router.get("/following", auth, async (req, res) => {
     const nextCursor = posts.length > 0 ? posts[posts.length - 1].createdAt : null;
     const hasNextPage = posts.length === limit ? true : false;
 
-    
+
     res.json({ posts, nextCursor, hasNextPage });
 
 
@@ -89,13 +90,32 @@ router.get("/following", auth, async (req, res) => {
 });
 
 
-module.exports = router;
 
 
+// API For Deleting The Posts.
+router.delete("/:postId", auth, async (req, res) => {
+
+    const postId = req.params.postId;
+    const userId = req.user._id;
 
 
+    const post = await Post.findById(postId);
+    if(!post) return res.status(404).json({ message: "Post not found." });
 
+    if(post.user.toString()!== userId) return res.status(401).json({ message: "Unauthorized." });
 
+    post.media.forEach(async (file) => {
+        const filePath = path.join(__dirname, "../uploads/posts", file.name);
+        try {
+            await fs.unlink(filePath);
+        } catch (error) {
+            console.error(`Error deleting file ${filePath}`);
+        }
+    });
 
+    await Post.deleteOne();
+    res.json({ message: "Post deleted successfully." });
+
+});
 
 module.exports = router;
